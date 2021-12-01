@@ -1,5 +1,7 @@
+use aoc_runner_derive::aoc;
 use std::str::FromStr;
 
+#[aoc(day1, part1)]
 fn solve_part_1(input: &str) -> u32 {
     input
         .lines()
@@ -18,6 +20,7 @@ fn solve_part_1(input: &str) -> u32 {
         .sum::<u32>()
 }
 
+#[aoc(day1, part2)]
 fn solve_part_2(input: &str) -> u32 {
     input
         .lines()
@@ -34,16 +37,4 @@ fn solve_part_2(input: &str) -> u32 {
         .windows(2)
         .filter_map(|sum| if sum[0] < sum[1] { Some(1) } else { None })
         .sum::<u32>()
-}
-
-fn main() {
-    println!(
-        "[Part 1] {}",
-        solve_part_1(include_str!("../data/input_1.txt"))
-    );
-
-    println!(
-        "[Part 1] {} ",
-        solve_part_2(include_str!("../data/input_2.txt"))
-    );
 }
