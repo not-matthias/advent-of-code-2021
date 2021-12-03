@@ -17,16 +17,8 @@ fn find_rating<F: Fn(usize, usize) -> u8, const T: usize>(
 ) -> [u8; T] {
     let mut filtered_bits = input.to_vec();
     for i in 0..T {
-        let one_count = filtered_bits
-            .iter()
-            .map(|bit| bit[i])
-            .filter(|bit| *bit == 1)
-            .count();
-        let zero_count = filtered_bits
-            .iter()
-            .map(|bit| bit[i])
-            .filter(|bit| *bit == 0)
-            .count();
+        let one_count = filtered_bits.iter().filter(|bit| bit[i] == 1).count();
+        let zero_count = filtered_bits.iter().filter(|bit| bit[i] == 0).count();
 
         let bit_criteria = bit_criteria(one_count, zero_count);
         filtered_bits.retain(|bit| bit[i] == bit_criteria);
@@ -56,10 +48,10 @@ fn parse_input(input: &str) -> Vec<[u8; 12]> {
 }
 
 #[aoc(day3, part1)]
-fn solve_part_1(input: &[[u8; 12]]) -> u64 {
-    let mut gamma_rate: [u8; 12] = [0u8; 12];
+fn solve_part_1<const T: usize>(input: &[[u8; T]]) -> u64 {
+    let mut gamma_rate: [u8; T] = [0u8; T];
 
-    for i in 0..12 {
+    for i in 0..T {
         let zero_bits = input.iter().filter(|x| x[i] == 0).count();
         let one_bits = input.iter().filter(|x| x[i] == 1).count();
 
