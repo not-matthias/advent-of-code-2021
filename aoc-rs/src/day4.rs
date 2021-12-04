@@ -1,13 +1,15 @@
-use aoc_runner_derive::aoc;
-use aoc_runner_derive::aoc_generator;
+use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
-use std::fmt::{Display, Formatter};
-use std::str::FromStr;
+use std::{
+    fmt::{Display, Formatter},
+    str::FromStr,
+};
 
 #[derive(Copy, Clone, Default)]
 pub struct BingoBoard([[u8; 5]; 5]);
 
-/// The value that will be used to mark cells of numbers on the bingo board that have been drawn.
+/// The value that will be used to mark cells of numbers on the bingo board that
+/// have been drawn.
 pub const MARKER: u8 = u8::MAX;
 
 impl BingoBoard {
@@ -24,11 +26,10 @@ impl BingoBoard {
         BingoBoard(board)
     }
 
-    pub fn get_column(&self, i: usize) -> Vec<u8> {
-        self.0.iter().map(|row| row[i]).collect()
-    }
+    pub fn get_column(&self, i: usize) -> Vec<u8> { self.0.iter().map(|row| row[i]).collect() }
 
-    /// Marks the cell that contains the specified number. If the number is not defined, nothing will happen.
+    /// Marks the cell that contains the specified number. If the number is not
+    /// defined, nothing will happen.
     pub fn assign_number(&mut self, number: u8) {
         if let Some((position, _)) = self.0.iter().flatten().find_position(|&&n| n == number) {
             let row = position / 5;
@@ -55,7 +56,8 @@ impl BingoBoard {
             .sum()
     }
 
-    /// The maximum number of cells that have already been marked (either per row or column)
+    /// The maximum number of cells that have already been marked (either per
+    /// row or column)
     pub fn max_cells_marked(&self) -> usize {
         let col_marks = (0..5)
             .map(|i| self.get_column(i).iter().filter(|&&n| n == MARKER).count())
@@ -121,10 +123,7 @@ fn find_winner(drawn_numbers: &[u8], boards: &mut [BingoBoard]) -> Option<(u8, B
     None
 }
 
-fn find_last_board(
-    drawn_numbers: Vec<u8>,
-    mut boards: Vec<BingoBoard>,
-) -> Option<(u8, BingoBoard)> {
+fn find_last_board(drawn_numbers: Vec<u8>, mut boards: Vec<BingoBoard>) -> Option<(u8, BingoBoard)> {
     for number in drawn_numbers {
         // If we found the last board, return it.
         //
@@ -177,8 +176,7 @@ mod tests {
 
     #[test]
     fn test_board() {
-        let board =
-            "22 13 17 11  0\n 8  2 23  4 24\n21  9 14 16  7\n 6 10  3 18  5\n 1 12 20 15 19";
+        let board = "22 13 17 11  0\n 8  2 23  4 24\n21  9 14 16  7\n 6 10  3 18  5\n 1 12 20 15 19";
         let lines = board.lines().collect::<Vec<_>>();
         let mut board = BingoBoard::new(&lines);
 
@@ -190,8 +188,7 @@ mod tests {
 
     #[test]
     fn test_max_unmarked_cells() {
-        let (drawn_numbers, mut boards) =
-            parse_input(include_str!("../input/2021/day4_example.txt"));
+        let (drawn_numbers, mut boards) = parse_input(include_str!("../input/2021/day4_example.txt"));
         let _ = find_winner(drawn_numbers.as_slice(), boards.as_mut_slice());
 
         assert_eq!(boards[0].max_cells_marked(), 4);
@@ -201,10 +198,8 @@ mod tests {
 
     #[test]
     fn test_find_winner() {
-        let (drawn_numbers, mut boards) =
-            parse_input(include_str!("../input/2021/day4_example.txt"));
-        let (last_num, winner) =
-            find_winner(drawn_numbers.as_slice(), boards.as_mut_slice()).unwrap();
+        let (drawn_numbers, mut boards) = parse_input(include_str!("../input/2021/day4_example.txt"));
+        let (last_num, winner) = find_winner(drawn_numbers.as_slice(), boards.as_mut_slice()).unwrap();
 
         assert_eq!(last_num, 24);
         assert_eq!(winner.unmarked_number_sum(), 188);

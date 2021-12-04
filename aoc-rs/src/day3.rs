@@ -1,5 +1,4 @@
-use aoc_runner_derive::aoc;
-use aoc_runner_derive::aoc_generator;
+use aoc_runner_derive::{aoc, aoc_generator};
 
 fn binary_to_int(number: &[u8]) -> u64 {
     let mut result = 0u64;
@@ -11,10 +10,7 @@ fn binary_to_int(number: &[u8]) -> u64 {
     result
 }
 
-fn find_rating<F: Fn(usize, usize) -> u8, const T: usize>(
-    input: &[[u8; T]],
-    bit_criteria: F,
-) -> [u8; T] {
+fn find_rating<F: Fn(usize, usize) -> u8, const T: usize>(input: &[[u8; T]], bit_criteria: F) -> [u8; T] {
     let mut filtered_bits = input.to_vec();
     for i in 0..T {
         let one_count = filtered_bits.iter().filter(|bit| bit[i] == 1).count();

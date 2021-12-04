@@ -1,5 +1,4 @@
-use aoc_runner_derive::aoc;
-use aoc_runner_derive::aoc_generator;
+use aoc_runner_derive::{aoc, aoc_generator};
 use std::str::FromStr;
 
 #[derive(Debug)]
@@ -16,7 +15,8 @@ fn parse_input(input: &str) -> Vec<Command> {
         .filter_map(|line| {
             // WARNING: When testing things, you must not call `nth` or `next` since it
             //          consumes the iterator and will thus result in completely different
-            //          outputs. Either don't print anything, or just use `collect::<Vec<_>>()`.
+            //          outputs. Either don't print anything, or just use
+            // `collect::<Vec<_>>()`.
             //
             //          In this case, nth(1) and nth(0) also caused some problems for me, so
             //          it's probably best to just use next() or next_back() instead.

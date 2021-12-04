@@ -27,11 +27,7 @@ fn solve_part_2(input: &str) -> u32 {
         .collect::<Vec<_>>()
         .windows(3)
         .map(|lines| {
-            Some(
-                u32::from_str(lines[0]).unwrap()
-                    + u32::from_str(lines[1]).unwrap()
-                    + u32::from_str(lines[2]).unwrap(),
-            )
+            Some(u32::from_str(lines[0]).unwrap() + u32::from_str(lines[1]).unwrap() + u32::from_str(lines[2]).unwrap())
         })
         .collect::<Vec<_>>()
         .windows(2)
