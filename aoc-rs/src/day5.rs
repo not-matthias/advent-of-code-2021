@@ -13,7 +13,6 @@ pub struct Line {
 
 #[derive(Default)]
 pub struct Diagram {
-    pub lines: [[u32; 9]; 9],
     pub points: Vec<(u32, u32)>,
 }
 
@@ -21,45 +20,65 @@ impl Diagram {
     pub fn new() -> Self { Default::default() }
 
     pub fn draw_line(&mut self, line: &Line) {
-        // Only consider horizontal and vertical lines
+        // Diagonal line
         if line.from.0 != line.to.0 && line.from.1 != line.to.1 {
-            println!("Skipping");
+            let mut x_range: Vec<_> = (line.from.0..=line.to.0).collect();
+            if line.from.0 > line.to.0 {
+                x_range = (line.to.0..=line.from.0).rev().collect();
+            }
+
+            let mut y_range: Vec<_> = (line.from.1..=line.to.1).collect();
+            if line.from.1 > line.to.1 {
+                y_range = (line.to.1..=line.from.1).rev().collect();
+            }
+
+            let points = x_range
+                .into_iter()
+                .enumerate()
+                .zip(y_range.into_iter().enumerate())
+                .filter_map(|((xi, x), (yi, y))| {
+                    //
+                    if xi == yi {
+                        Some((x, y))
+                    } else {
+                        None
+                    }
+                });
+            self.points.extend(points);
+            // for x in  {
+            //     for y in  {
+            //         // self.lines[x as usize][y as usize] += 1;
+            //         self.points.push((x, y));
+            //     }
+            // }
+
             return;
         }
 
+        // Vertical line
         if line.from.0 == line.to.0 {
             let start = line.from.1.min(line.to.1);
             let end = line.from.1.max(line.to.1);
 
             for p in start..=end {
-                // self.lines[line.from.0 as usize][p as usize] += 1;
                 self.points.push((line.from.0, p));
             }
+            return;
         }
+
+        // Horizontal line
         if line.from.1 == line.to.1 {
             let start = line.from.0.min(line.to.0);
             let end = line.from.0.max(line.to.0);
 
             for p in start..=end {
-                // self.lines[p as usize][line.to.1 as usize] += 1;
                 self.points.push((p, line.to.1));
             }
+            return;
         }
     }
 
     pub fn duplicate_point_count(&self) -> u32 { self.points.iter().duplicates().count() as u32 }
-}
-
-impl Display for Diagram {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        for line in self.lines {
-            for item in line {
-                writeln!(f, "{:?}", item)?;
-            }
-        }
-
-        Ok(())
-    }
 }
 
 #[aoc_generator(day5)]
@@ -98,9 +117,12 @@ fn solve_part_1(input: &[Line]) -> u32 {
 
 #[aoc(day5, part2)]
 fn solve_part_2(input: &[Line]) -> u32 {
-    let (mut horizontal_position, mut depth, mut aim) = (0, 0, 0);
+    let mut diagram = Diagram::new();
+    for line in input {
+        diagram.draw_line(line);
+    }
 
-    depth * horizontal_position
+    diagram.duplicate_point_count()
 }
 
 #[cfg(test)]
@@ -114,19 +136,36 @@ mod tests {
 
     #[test]
     fn test_draw_line() {
+        // Horizontal line
         let mut diagram = Diagram::new();
-        diagram.draw_line(Line {
+        diagram.draw_line(&Line {
             from: (9, 7),
             to: (7, 7),
         });
         assert_eq!(diagram.points, vec![(7, 7), (8, 7), (9, 7)]);
 
+        // Vertical line
         let mut diagram = Diagram::new();
-        diagram.draw_line(Line {
+        diagram.draw_line(&Line {
             from: (1, 1),
             to: (1, 3),
         });
         assert_eq!(diagram.points, vec![(1, 1), (1, 2), (1, 3)]);
+
+        // Diagonal line
+        let mut diagram = Diagram::new();
+        diagram.draw_line(&Line {
+            from: (1, 1),
+            to: (3, 3),
+        });
+        assert_eq!(diagram.points, vec![(1, 1), (2, 2), (3, 3)]);
+
+        let mut diagram = Diagram::new();
+        diagram.draw_line(&Line {
+            from: (9, 7),
+            to: (7, 9),
+        });
+        assert_eq!(diagram.points, vec![(9, 7), (8, 8), (7, 9)]);
     }
 
     #[test]
@@ -138,7 +177,7 @@ mod tests {
             from: (9, 7),
             to: (7, 7),
         };
-        diagram.draw_line(line);
+        diagram.draw_line(&line);
 
         // for line in lines {
         //     diagram.draw_line(line);
