@@ -1,9 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
-use std::{
-    fmt::{Display, Formatter},
-    str::FromStr,
-};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Line {
@@ -19,8 +15,7 @@ pub struct Diagram {
 impl Diagram {
     pub fn new() -> Self { Default::default() }
 
-    pub fn draw_line(&mut self, line: &Line) {
-        // Diagonal line
+    fn draw_diagonal(&mut self, line: &Line) {
         if line.from.0 != line.to.0 && line.from.1 != line.to.1 {
             let mut x_range: Vec<_> = (line.from.0..=line.to.0).collect();
             if line.from.0 > line.to.0 {
@@ -45,28 +40,10 @@ impl Diagram {
                     }
                 });
             self.points.extend(points);
-            // for x in  {
-            //     for y in  {
-            //         // self.lines[x as usize][y as usize] += 1;
-            //         self.points.push((x, y));
-            //     }
-            // }
-
-            return;
         }
+    }
 
-        // Vertical line
-        if line.from.0 == line.to.0 {
-            let start = line.from.1.min(line.to.1);
-            let end = line.from.1.max(line.to.1);
-
-            for p in start..=end {
-                self.points.push((line.from.0, p));
-            }
-            return;
-        }
-
-        // Horizontal line
+    fn draw_horizontal(&mut self, line: &Line) {
         if line.from.1 == line.to.1 {
             let start = line.from.0.min(line.to.0);
             let end = line.from.0.max(line.to.0);
@@ -74,11 +51,37 @@ impl Diagram {
             for p in start..=end {
                 self.points.push((p, line.to.1));
             }
-            return;
         }
     }
 
-    pub fn duplicate_point_count(&self) -> u32 { self.points.iter().duplicates().count() as u32 }
+    fn draw_vertical(&mut self, line: &Line) {
+        if line.from.0 == line.to.0 {
+            let start = line.from.1.min(line.to.1);
+            let end = line.from.1.max(line.to.1);
+
+            for p in start..=end {
+                self.points.push((line.from.0, p));
+            }
+        }
+    }
+
+    pub fn draw_straight_line(&mut self, line: &Line) {
+        if line.from.0 == line.to.0 {
+            self.draw_vertical(line);
+        } else if line.from.1 == line.to.1 {
+            self.draw_horizontal(line);
+        }
+    }
+
+    pub fn draw_line(&mut self, line: &Line) {
+        if line.from.0 != line.to.0 && line.from.1 != line.to.1 {
+            self.draw_diagonal(line);
+        } else {
+            self.draw_straight_line(line);
+        }
+    }
+
+    pub fn duplicates(&self) -> u32 { self.points.iter().duplicates().count() as u32 }
 }
 
 #[aoc_generator(day5)]
@@ -86,14 +89,14 @@ fn parse_input(input: &str) -> Vec<Line> {
     input
         .lines()
         .map(|line| {
-            let mut parts = line.split(" -> ").collect::<Vec<_>>();
+            let parts = line.split(" -> ").collect::<Vec<_>>();
 
             let from = parts[0]
-                .split(",")
+                .split(',')
                 .map(|x| x.parse::<u32>().unwrap())
                 .collect::<Vec<_>>();
             let to = parts[1]
-                .split(",")
+                .split(',')
                 .map(|x| x.parse::<u32>().unwrap())
                 .collect::<Vec<_>>();
 
@@ -109,10 +112,10 @@ fn parse_input(input: &str) -> Vec<Line> {
 fn solve_part_1(input: &[Line]) -> u32 {
     let mut diagram = Diagram::new();
     for line in input {
-        diagram.draw_line(line);
+        diagram.draw_straight_line(line);
     }
 
-    diagram.duplicate_point_count()
+    diagram.duplicates()
 }
 
 #[aoc(day5, part2)]
@@ -122,7 +125,7 @@ fn solve_part_2(input: &[Line]) -> u32 {
         diagram.draw_line(line);
     }
 
-    diagram.duplicate_point_count()
+    diagram.duplicates()
 }
 
 #[cfg(test)]
@@ -137,6 +140,7 @@ mod tests {
     #[test]
     fn test_draw_line() {
         // Horizontal line
+        //
         let mut diagram = Diagram::new();
         diagram.draw_line(&Line {
             from: (9, 7),
@@ -145,6 +149,7 @@ mod tests {
         assert_eq!(diagram.points, vec![(7, 7), (8, 7), (9, 7)]);
 
         // Vertical line
+        //
         let mut diagram = Diagram::new();
         diagram.draw_line(&Line {
             from: (1, 1),
@@ -153,6 +158,7 @@ mod tests {
         assert_eq!(diagram.points, vec![(1, 1), (1, 2), (1, 3)]);
 
         // Diagonal line
+        //
         let mut diagram = Diagram::new();
         diagram.draw_line(&Line {
             from: (1, 1),
@@ -171,18 +177,29 @@ mod tests {
     #[test]
     fn test_example() {
         let lines = parse_input(get_input());
+
+        // Part 1
         let mut diagram = Diagram::new();
+        for line in lines.iter() {
+            diagram.draw_straight_line(line);
+        }
+        assert_eq!(diagram.duplicates(), 5);
 
-        let line = Line {
-            from: (9, 7),
-            to: (7, 7),
-        };
-        diagram.draw_line(&line);
+        // Part 2
+        let mut diagram = Diagram::new();
+        for line in lines.iter() {
+            diagram.draw_line(line);
+        }
+        assert_eq!(diagram.duplicates(), 12);
+    }
 
-        // for line in lines {
-        //     diagram.draw_line(line);
-        // }
+    #[test]
+    fn test_real() {
+        let lines = parse_input(include_str!("../input/2021/day5.txt"));
+        let part1 = solve_part_1(&lines);
+        let part2 = solve_part_2(&lines);
 
-        assert_eq!(diagram.duplicate_point_count(), 5);
+        assert_eq!(part1, 6461);
+        assert_eq!(part2, 18065);
     }
 }
