@@ -9,6 +9,7 @@ pub struct Line {
 
 #[derive(Default)]
 pub struct Diagram {
+    // TODO: Replace this with hashmap to make it more efficient
     pub points: Vec<(u32, u32)>,
 }
 
