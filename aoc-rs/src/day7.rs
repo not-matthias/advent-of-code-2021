@@ -1,4 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
+use rayon::prelude::*;
 use std::str::FromStr;
 
 #[aoc_generator(day7)]
@@ -16,7 +17,7 @@ fn solve_part_1(input: &[u16]) -> u16 {
     let max = input.iter().max().unwrap();
 
     (*min..*max)
-        .into_iter()
+        .into_par_iter()
         .map(|i| input.iter().map(|input| i.abs_diff(*input)).sum::<u16>())
         .min()
         .unwrap()
@@ -28,7 +29,7 @@ fn solve_part_2(input: &[u16]) -> u16 {
     let max = input.iter().max().unwrap();
 
     (*min..*max)
-        .into_iter()
+        .into_par_iter()
         .map(|i| {
             input
                 .into_par_iter()
