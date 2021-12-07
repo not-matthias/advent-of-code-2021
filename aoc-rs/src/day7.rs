@@ -2,45 +2,41 @@ use aoc_runner_derive::{aoc, aoc_generator};
 use std::str::FromStr;
 
 #[aoc_generator(day7)]
-fn parse_input(input: &str) -> Vec<u64> {
+fn parse_input(input: &str) -> Vec<u16> {
     input
         .lines()
-        .map(|line| line.split(',').filter_map(|part| u64::from_str(part).ok()))
+        .map(|line| line.split(',').filter_map(|part| u16::from_str(part).ok()))
         .flatten()
         .collect::<Vec<_>>()
 }
 
 #[aoc(day7, part1)]
-fn solve_part_1(input: &[u64]) -> u64 {
+fn solve_part_1(input: &[u16]) -> u16 {
+    let min = input.iter().min().unwrap();
     let max = input.iter().max().unwrap();
 
-    let mut min_costs = u64::MAX;
-    for i in 0..*max {
-        let costs = input.iter().map(|input| i.abs_diff(*input)).sum::<u64>();
-        if costs < min_costs {
-            min_costs = costs;
-        }
-    }
-
-    min_costs
+    (*min..*max)
+        .into_iter()
+        .map(|i| input.iter().map(|input| i.abs_diff(*input)).sum::<u16>())
+        .min()
+        .unwrap()
 }
 
 #[aoc(day7, part2)]
-fn solve_part_2(input: &[u64]) -> u64 {
+fn solve_part_2(input: &[u16]) -> u16 {
+    let min = input.iter().min().unwrap();
     let max = input.iter().max().unwrap();
 
-    let mut min_costs = u64::MAX;
-    for i in 0..*max {
-        let costs = input
-            .iter()
-            .map(|input| (1..=input.abs_diff(i)).sum::<u64>())
-            .sum::<u64>();
-        if costs < min_costs {
-            min_costs = costs;
-        }
-    }
-
-    min_costs
+    (*min..*max)
+        .into_iter()
+        .map(|i| {
+            input
+                .into_par_iter()
+                .map(|input| (1..=input.abs_diff(i)).sum::<u16>())
+                .sum::<u16>()
+        })
+        .min()
+        .unwrap()
 }
 
 #[cfg(test)]
