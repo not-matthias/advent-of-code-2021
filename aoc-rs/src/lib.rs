@@ -1,6 +1,7 @@
 #![feature(bool_to_option)]
 #![feature(slice_group_by)]
 #![feature(int_abs_diff)]
+#![feature(decl_macro)]
 
 use aoc_runner_derive::aoc_lib;
 
@@ -11,6 +12,7 @@ pub mod day4;
 pub mod day5;
 pub mod day6;
 pub mod day7;
+pub mod day9;
 
 #[cfg(target_env = "DONT_COMPILE_THIS")] pub mod template;
 
