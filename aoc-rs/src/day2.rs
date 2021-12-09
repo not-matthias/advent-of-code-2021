@@ -13,13 +13,15 @@ fn parse_input(input: &str) -> Vec<Command> {
     input
         .lines()
         .filter_map(|line| {
-            // WARNING: When testing things, you must not call `nth` or `next` since it
-            //          consumes the iterator and will thus result in completely different
-            //          outputs. Either don't print anything, or just use
+            // WARNING: When testing things, you must not call `nth` or `next`
+            // since it          consumes the iterator and will thus
+            // result in completely different          outputs.
+            // Either don't print anything, or just use
             // `collect::<Vec<_>>()`.
             //
-            //          In this case, nth(1) and nth(0) also caused some problems for me, so
-            //          it's probably best to just use next() or next_back() instead.
+            //          In this case, nth(1) and nth(0) also caused some
+            // problems for me, so          it's probably best to
+            // just use next() or next_back() instead.
             //
             let mut parts = line.split(' ');
             let num = u32::from_str(parts.next_back().unwrap()).unwrap();

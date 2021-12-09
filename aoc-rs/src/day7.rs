@@ -3,7 +3,13 @@ use rayon::prelude::*;
 use std::str::FromStr;
 
 #[aoc_generator(day7)]
-fn parse_input(input: &str) -> Vec<u32> { input.trim().split(',').flat_map(u32::from_str).collect::<Vec<_>>() }
+fn parse_input(input: &str) -> Vec<u32> {
+    input
+        .trim()
+        .split(',')
+        .flat_map(u32::from_str)
+        .collect::<Vec<_>>()
+}
 
 #[aoc(day7, part1)]
 fn solve_part_1(input: &[u32]) -> u32 {
@@ -26,7 +32,7 @@ fn solve_part_2(input: &[u32]) -> u32 {
         .into_par_iter()
         .map(|i| {
             input
-                .into_iter()
+                .iter()
                 .map(|input| {
                     let n = input.abs_diff(i);
 
@@ -46,8 +52,14 @@ mod tests {
 
     #[test]
     fn test_parse_input() {
-        assert_eq!(parse_input(get_input()), vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14]);
-        assert_eq!(parse_input(include_str!("../input/2021/day7.txt")).len(), 1000);
+        assert_eq!(
+            parse_input(get_input()),
+            vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14]
+        );
+        assert_eq!(
+            parse_input(include_str!("../input/2021/day7.txt")).len(),
+            1000
+        );
     }
 
     #[test]
