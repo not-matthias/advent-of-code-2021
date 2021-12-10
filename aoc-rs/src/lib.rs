@@ -14,6 +14,7 @@ pub mod day6;
 pub mod day7;
 pub mod day9;
 
+mod day10;
 #[cfg(target_env = "DONT_COMPILE_THIS")] pub mod template;
 
 aoc_lib! { year = 2021}
