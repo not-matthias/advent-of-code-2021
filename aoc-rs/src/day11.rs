@@ -1,6 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
-use std::{collections::HashMap, str::FromStr};
 
 pub const THRESHOLD: u8 = 9;
 
@@ -146,12 +145,11 @@ fn parse_input(input: &str) -> Vec<Vec<Octopus>> {
 
 #[aoc(day11, part1)]
 fn solve_part_1(input: &[Vec<Octopus>]) -> u32 {
-    let mut input = input.to_vec();
-    let mut board = Board::new(input.clone());
+    let mut board = Board::new(input.to_vec());
 
     let mut flashes = 0;
     for _ in 0..100 {
-        board.print();
+        // board.print();
 
         flashes += step(&mut board);
     }
@@ -161,8 +159,17 @@ fn solve_part_1(input: &[Vec<Octopus>]) -> u32 {
 
 #[aoc(day11, part2)]
 fn solve_part_2(input: &[Vec<Octopus>]) -> u32 {
-    //
-    todo!()
+    let input = input.to_vec();
+    let mut board = Board::new(input.clone());
+
+    let max_flashes = input.len() as u32 * input[0].len() as u32;
+    for current_step in 1.. {
+        if step(&mut board) == max_flashes {
+            return current_step;
+        }
+    }
+
+    unreachable!()
 }
 
 #[cfg(test)]
@@ -196,8 +203,8 @@ mod tests {
         let input = "11111\n19991\n19191\n19991\n11111";
         let input = parse_input(input);
 
-        assert_eq!(solve_part_1(&input), 0);
-        assert_eq!(solve_part_2(&input), 0);
+        assert_eq!(solve_part_1(&input), 259);
+        assert_eq!(solve_part_2(&input), 6);
     }
 
     fn get_input() -> &'static str {
@@ -211,6 +218,6 @@ mod tests {
         let input = parse_input(input);
 
         assert_eq!(solve_part_1(&input), 1656);
-        assert_eq!(solve_part_2(&input), 0);
+        assert_eq!(solve_part_2(&input), 195);
     }
 }

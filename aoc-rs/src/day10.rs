@@ -1,9 +1,6 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
-use std::{
-    collections::{HashMap, VecDeque},
-    str::FromStr,
-};
+use std::collections::VecDeque;
 
 #[aoc_generator(day10)]
 fn parse_input(input: &str) -> Vec<VecDeque<char>> {
@@ -19,7 +16,7 @@ fn solve_part_1(input: &[VecDeque<char>]) -> u32 {
     let mut points = 0;
 
     for line in input {
-        let result = line.into_iter().fold(0, |mut acc, item| {
+        let result = line.iter().fold(0, |mut acc, item| {
             match item {
                 '<' | '(' | '[' | '{' => stack.push_back(item),
                 '}' | ']' | ')' | '>' => {
@@ -33,7 +30,7 @@ fn solve_part_1(input: &[VecDeque<char>]) -> u32 {
                         _ => 0,
                     };
                 }
-                _ => unreachable!("Invalid character"),
+                _ => unreachable!("Invalid character: {}", item),
             }
 
             acc
@@ -51,7 +48,7 @@ fn solve_part_2(input: &[VecDeque<char>]) -> u64 {
     let mut scores = Vec::new();
 
     for line in input {
-        let result = line.into_iter().fold(0, |mut acc, item| {
+        let result = line.iter().fold(0, |mut acc, item| {
             match item {
                 '<' | '(' | '[' | '{' => stack.push_back(item),
                 '}' | ']' | ')' | '>' => {
@@ -97,7 +94,7 @@ fn solve_part_2(input: &[VecDeque<char>]) -> u64 {
         stack.clear();
     }
 
-    scores.sort();
+    scores.sort_unstable();
 
     scores[scores.len() / 2]
 }
@@ -106,17 +103,15 @@ fn solve_part_2(input: &[VecDeque<char>]) -> u64 {
 mod tests {
     use super::*;
 
+    #[rustfmt::skip]
     fn get_input() -> &'static str {
-        "[({(<(())[]>[[{[]{<()<>>\n[(()[<>])]({[<{<<[]>>(\\
-         n{([(<{}[<>[]}>{[]{[(<()>\n(((({<>}<{<{<>}{[]{[]{}\\
-         n[[<[([]))<([[{}[[()]]]\n[{[{({}]{}}([{[{{{}}([]\\
-         n{<[[]]>}<{[{[{[]{()[[[]\n[<(<(<(<{}))><([]([]()\\
-         n<{([([[(<>()){}]>(<<{{\n<{([{{}}[<[[[<>{}]]]>[]]"
+        "[({(<(())[]>[[{[]{<()<>>\n[(()[<>])]({[<{<<[]>>(\n{([(<{}[<>[]}>{[]{[(<()>\n(((({<>}<{<{<>}{[]{[]{}\n[[<[([]))<([[{}[[()]]]\n[{[{({}]{}}([{[{{{}}([]\n{<[[]]>}<{[{[{[]{()[[[]\n[<(<(<(<{}))><([]([]()\n<{([([[(<>()){}]>(<<{{\n<{([{{}}[<[[[<>{}]]]>[]]"
     }
 
     #[test]
     fn test_example() {
         let input = get_input();
+
         let input = parse_input(input);
 
         assert_eq!(solve_part_1(&input), 26397);
